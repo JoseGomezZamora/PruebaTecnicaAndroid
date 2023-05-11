@@ -1,14 +1,12 @@
 package com.example.pruebatecnicaandroid.retrofit
 
 import android.graphics.Bitmap
+import com.example.pruebatecnicaandroid.modules.models.DetailMoviesDataClass
 import com.example.pruebatecnicaandroid.modules.models.MoviesNowPlayingDataClass
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.Query
-import retrofit2.http.Streaming
-import retrofit2.http.Url
+import retrofit2.http.*
 
 interface IMoviesDb {
 
@@ -25,6 +23,9 @@ interface IMoviesDb {
         @Query("language") language: String,
         @Query("page") page: Int
     ): Call<MoviesNowPlayingDataClass>
+
+    @GET("{movie_id}")
+    fun getMovieDetails(@Path("movie_id") movieId: Int, @Query("api_key") apiKey: String, @Query("language") language: String): Call<DetailMoviesDataClass>
 
     @GET
     @Streaming

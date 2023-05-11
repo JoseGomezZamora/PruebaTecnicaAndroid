@@ -1,5 +1,6 @@
 package com.example.pruebatecnicaandroid.modules.fragments
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -34,6 +35,7 @@ class MovieListFragment : Fragment() {
     private lateinit var svSearchMovieMoviesListFrag: SearchView
     private lateinit var topMoviesAdapter: TopMoviesAdapter
     private lateinit var topMoviesAdapter2: TopMoviesAdapter
+    private var progressDialog: ProgressDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,23 +46,22 @@ class MovieListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        //context = requireContext()
-
         val rootView = inflater.inflate(R.layout.fragment_movie_list, container, false)
-
+        progressDialog = ProgressDialog(requireActivity())
 
         svSearchMovieMoviesListFrag = rootView.findViewById(R.id.svSearchMovieMoviesListFrag)
+
+        progresDialog()
 
         getMovies()
 
         svSearchMovieMoviesListFrag.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
-                // Acciones al enviar la búsqueda
+
                 return false
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                // Acciones al cambiar el texto de la búsqueda
                 println(newText)
                 topMoviesAdapter.buscar(newText.toString())
                 topMoviesAdapter2.buscar(newText.toString())
@@ -71,59 +72,6 @@ class MovieListFragment : Fragment() {
         return rootView
     }
 
-    /*private fun getTopMovies() {
-        val responseApi: Call<MoviesNowPlayingDataClass> = ApiServiceMovieDb
-            .getInstance()
-            .create(IMoviesDb::class.java)
-            .getTopPlayingMovies(API_KEY, language, page)
-        GlobalScope.launch {
-            try {
-
-                val response = responseApi.execute()
-                if (response.isSuccessful) {
-                    val result = response.body()
-                    if (result != null) {
-                        Log.d("MovieListFragment", "GetTopMovies API response successful")
-                        for (movie in result.results) {
-                            Log.d("MovieListFragment", "Title1: ${movie.title}")
-                        }
-                    }
-                } else {
-                    Log.e("MovieListFragment", "GetTopMovies API response error: ${response.code()} - ${response.message()}")
-                }
-
-            } catch (e: IOException) {
-                Log.e("MovieListFragment", "GetTopMovies API response error: ${e.message}")
-            }
-        }
-    }
-
-    private fun getNowMovies() {
-        val responseApi: Call<MoviesNowPlayingDataClass> = ApiServiceMovieDb
-            .getInstance()
-            .create(IMoviesDb::class.java)
-            .getNowPlayingMovies(API_KEY, language, page)
-        GlobalScope.launch {
-            try {
-
-                val response = responseApi.execute()
-                if (response.isSuccessful) {
-                    val result = response.body()
-                    if (result != null) {
-                        Log.d("MovieListFragment", "GetNowMovies API response successful")
-                        for (movie in result.results) {
-                            Log.d("MovieListFragment", "Title2: ${movie.title}")
-                        }
-                    }
-                } else {
-                    Log.e("MovieListFragment", "GetNowMovies API response error: ${response.code()} - ${response.message()}")
-                }
-
-            } catch (e: IOException) {
-                Log.e("MovieListFragment", "GetNowMovies API response error: ${e.message}")
-            }
-        }
-    }*/
 
     private fun getTopMovies() {
         ApiServiceMovieDb.getInstance().create(IMoviesDb::class.java)
@@ -141,6 +89,7 @@ class MovieListFragment : Fragment() {
                             val arrayList = ArrayList(result.results)
                             initRecyclerViewTopMovies(arrayList)
                             for (movie in result.results) {
+                                Log.d("MovieListFragment", "id1: ${movie.id}")
                                 Log.d("MovieListFragment", "Title1: ${movie.title}")
                                 Log.d("MovieListFragment", "raitin1: ${movie.voteAverage}")
                                 Log.d("MovieListFragment", "imag1: ${movie.posterPath}")
@@ -175,6 +124,7 @@ class MovieListFragment : Fragment() {
                             val arrayList = ArrayList(result.results)
                             initRecyclerViewCartelera(arrayList)
                             for (movie in result.results) {
+                                Log.d("MovieListFragment", "id2: ${movie.id}")
                                 Log.d("MovieListFragment", "Title2: ${movie.title}")
                                 Log.d("MovieListFragment", "raitin2: ${movie.voteAverage}")
                                 Log.d("MovieListFragment", "imag2: ${movie.posterPath}")
@@ -203,6 +153,7 @@ class MovieListFragment : Fragment() {
         recyclerView?.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         recyclerView?.setHasFixedSize(true)
         recyclerView?.adapter = topMoviesAdapter
+        progressDialog?.dismiss()
 
     }
 
@@ -224,6 +175,14 @@ class MovieListFragment : Fragment() {
         val job2 = async { getNowMovies() }
         job1.await()
         job2.await()
+    }
+
+    private fun progresDialog () {
+
+        progressDialog?.setMessage("Cargando...")
+        progressDialog?.setCancelable(false)
+        progressDialog?.show()
+
     }
 
     companion object {

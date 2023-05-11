@@ -7,4 +7,11 @@
     <!--FRAGMENT MovieListFragment-->
     <string name="letListTopMovies">Top Peliculas</string>
     <string name="letListCarteleraMovies">Cartelera Peliculas</string>
+
+    <!--Fragment DetailsMovie-->
+    <string name="letListDetails">Detalle de la Pelicula</string>
+    <string name="voteAverage">Calificacion 8.7</string>
+    <string name="overView">Descripcion de la pelicula</string>
+    <string name="overView2">Peter Quill, still reeling from the loss of Gamora, must rally his team around him to defend the universe along with protecting one of their own.</string>
+
 </resources>
